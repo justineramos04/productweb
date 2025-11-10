@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco Mug | Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #f4f7f3;
+      color: #333;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #f4f7f3;
+      padding: 15px 40px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+    }
+
+    .logo h1 {
+      font-size: 22px;
+      color: #2f572c;
+    }
+
+    .logo span {
+      font-size: 10px;
+      color: #777;
+      letter-spacing: 2px;
+    }
+
+    .nav-icons {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 20px;
+      color: #2f572c;
+      cursor: pointer;
+      position: relative;
+    }
+
+    /* Soft green icons styling */
+    .nav-icons i,
+    .nav-icons a i {
+      color: #2f572c;
+      transition: color 0.3s ease;
+    }
+
+    .nav-icons i:hover,
+    .nav-icons a i:hover {
+      color: #3b6e38;
+    }
+
+    .profile-link.active i {
+      color: #3b6e38;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      display: none;
+      flex-direction: column;
+      width: 180px;
+      z-index: 200;
+    }
+
+    .dropdown-menu a {
+      text-decoration: none;
+      color: #2f572c;
+      padding: 12px 20px;
+      border-bottom: 1px solid #eee;
+      font-size: 15px;
+      transition: background 0.3s;
+    }
+
+    .dropdown-menu a:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f2f7f2;
+    }
+
+    .dropdown-menu.active {
+      display: flex;
+    }
+
+    /* Profile Page */
+    .profile-container {
+      max-width: 600px;
+      background: white;
+      margin: 60px auto;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 40px 50px;
+      text-align: center;
+    }
+
+    .profile-container h2 {
+      color: #2f572c;
+      margin-bottom: 5px;
+      font-size: 24px;
+    }
+
+    .profile-container p {
+      color: #555;
+      font-size: 15px;
+      margin: 8px 0;
+    }
+
+    .profile-info {
+      text-align: left;
+      margin-top: 30px;
+    }
+
+    .profile-info h3 {
+      color: #2f572c;
+      border-bottom: 2px solid #d8e6d8;
+      padding-bottom: 5px;
+      font-size: 18px;
+    }
+
+    .info-item {
+      margin: 10px 0;
+      font-size: 15px;
+    }
+
+    .info-item strong {
+      color: #2f572c;
+    }
+
+    .edit-btn, .save-btn {
+      display: inline-block;
+      background-color: #2f572c;
+      color: white;
+      text-decoration: none;
+      padding: 10px 25px;
+      border-radius: 25px;
+      font-weight: 600;
+      margin-top: 25px;
+      transition: background 0.3s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .edit-btn:hover, .save-btn:hover {
+      background-color: #3d7a3a;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      color: #2f572c;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .cart-container {
+      position: relative;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -10px;
+      background-color: #e74c3c;
+      color: white;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 50%;
+      font-weight: 600;
+    }
+
+    input[type="text"], input[type="email"], input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <img src="2337b154-a3ac-486d-ab9f-7a3d5c61fff1.jpg" alt="Eco Mug Logo">
+      <div>
+        <h1>ECO MUG</h1>
+        <span>READY, SIP, N' GO!</span>
+      </div>
+    </div>
+    <div class="nav-icons">
+      <div class="cart-container">
+        <i class="fa-solid fa-cart-shopping" id="cart-icon"></i>
+        <div class="cart-badge" id="cart-count">0</div>
+      </div>
+      <a href="profile.html" class="profile-link active">
+        <i class="fa-solid fa-user"></i>
+      </a>
+      <i class="fa-solid fa-bars" id="menu-toggle"></i>
+
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="frontpage.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="shop.html">Shop</a>
+        <a href="fqa.html">F.A.Q</a>
+        <a href="nearest.html">Find Nearest Kiosk</a>
+        <a href="warranty.html">Warranty</a>
+        <a href="loginpage.html">Log out</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROFILE CONTENT -->
+  <div class="profile-container" id="profileContainer">
+    <h2 id="nameDisplay">John Doe</h2>
+    <p id="emailDisplay">johndoe@email.com</p>
+
+    <div class="profile-info" id="profileInfo">
+      <h3>Personal Information</h3>
+      <div class="info-item"><strong>Contact Number:</strong> <span id="contactDisplay">+63 912 345 6789</span></div>
+      <div class="info-item"><strong>Age:</strong> <span id="ageDisplay">21</span></div>
+      <div class="info-item"><strong>Address:</strong> <span id="addressDisplay">Puerto Princesa, Palawan</span></div>
+    </div>
+
+    <button class="edit-btn" id="editBtn">Edit Profile</button>
+    <button class="save-btn" id="saveBtn" style="display:none;">Save Changes</button><br>
+    <a href="frontpage.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+  </div>
+
+  <script>
+    // DROPDOWN MENU
+    const menuToggle = document.getElementById('menu-toggle');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    menuToggle.addEventListener('click', () => dropdownMenu.classList.toggle('active'));
+    document.addEventListener('click', (e) => {
+      if (!menuToggle.contains(e.target) && !dropdownMenu.contains(e.target))
+        dropdownMenu.classList.remove('active');
+    });
+
+    // CART ICON FUNCTION
+    const cartIcon = document.getElementById("cart-icon");
+    if (cartIcon) cartIcon.addEventListener("click", () => window.location.href = "cart.html");
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cartDetails")) || [];
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const cartCount = document.getElementById("cart-count");
+      if (cartCount) cartCount.textContent = totalItems;
+    }
+    updateCartCount();
+
+    // PROFILE EDIT FUNCTION
+    const editBtn = document.getElementById('editBtn');
+    const saveBtn = document.getElementById('saveBtn');
+
+    editBtn.addEventListener('click', () => {
+      // Get current values
+      const name = document.getElementById('nameDisplay').innerText;
+      const email = document.getElementById('emailDisplay').innerText;
+      const contact = document.getElementById('contactDisplay').innerText;
+      const age = document.getElementById('ageDisplay').innerText;
+      const address = document.getElementById('addressDisplay').innerText;
+
+      // Replace text with input fields
+      document.getElementById('nameDisplay').outerHTML = `<input type="text" id="nameInput" value="${name}">`;
+      document.getElementById('emailDisplay').outerHTML = `<input type="email" id="emailInput" value="${email}">`;
+      document.getElementById('contactDisplay').outerHTML = `<input type="text" id="contactInput" value="${contact}">`;
+      document.getElementById('ageDisplay').outerHTML = `<input type="number" id="ageInput" value="${age}">`;
+      document.getElementById('addressDisplay').outerHTML = `<input type="text" id="addressInput" value="${address}">`;
+
+      editBtn.style.display = "none";
+      saveBtn.style.display = "inline-block";
+    });
+
+    saveBtn.addEventListener('click', () => {
+      // Get updated values
+      const name = document.getElementById('nameInput').value;
+      const email = document.getElementById('emailInput').value;
+      const contact = document.getElementById('contactInput').value;
+      const age = document.getElementById('ageInput').value;
+      const address = document.getElementById('addressInput').value;
+
+      // Save to localStorage
+      const profileData = { name, email, contact, age, address };
+      localStorage.setItem('profileData', JSON.stringify(profileData));
+
+      // Update display
+      location.reload();
+    });
+
+    // LOAD SAVED PROFILE DATA
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedData = JSON.parse(localStorage.getItem('profileData'));
+      if (savedData) {
+        document.getElementById('nameDisplay').innerText = savedData.name;
+        document.getElementById('emailDisplay').innerText = savedData.email;
+        document.getElementById('contactDisplay').innerText = savedData.contact;
+        document.getElementById('ageDisplay').innerText = savedData.age;
+        document.getElementById('addressDisplay').innerText = savedData.address;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco Mug | Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #f4f7f3;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f4f7f3;
+      padding: 20px 0;
+      width: 100%;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+
+    .logo h1 {
+      font-size: 24px;
+      color: #2f572c;
+    }
+
+    .logo span {
+      font-size: 12px;
+      color: #777;
+      letter-spacing: 2px;
+    }
+
+    main {
+      margin-top: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      flex: 1;
+    }
+
+    .login-container {
+      background-color: #ffffff;
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .login-container h2 {
+      text-align: center;
+      color: #2f572c;
+      margin-bottom: 25px;
+    }
+
+    .input-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-container input {
+      width: 100%;
+      padding: 12px 40px 12px 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .input-container i {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: #888;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .input-container i:hover {
+      color: #2f572c;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      background-color: #2f572c;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: background 0.3s;
+    }
+
+    .login-container button:hover {
+      background-color: #1f3e1b;
+    }
+
+    .signup-btn {
+      background-color: #ffffff;
+      border: 1.5px solid #2f572c;
+      color: #2f572c;
+    }
+
+    .signup-btn:hover {
+      background-color: #2f572c;
+      color: #fff;
+    }
+
+    .message {
+      text-align: center;
+      color: red;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="2337b154-a3ac-486d-ab9f-7a3d5c61fff1.jpg" alt="Eco Mug Logo">
+    <div>
+      <h1>ECO MUG</h1>
+      <span>READY, SIP, N' GO!</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="login-container">
+    <h2>Login</h2>
+    <div class="message" id="message"></div>
+
+    <div class="input-container">
+      <input type="text" placeholder="Username" id="username">
+    </div>
+
+    <div class="input-container">
+      <input type="password" placeholder="Password" id="password">
+      <i class="fa-solid fa-eye" id="togglePassword"></i>
+    </div>
+
+    <button onclick="login()">Login</button>
+    <button class="signup-btn" onclick="signup()">Sign Up</button>
+  </div>
+</main>
+
+<script>
+  // Show / Hide Password Function
+  const togglePassword = document.getElementById("togglePassword");
+  const passwordInput = document.getElementById("password");
+
+  togglePassword.addEventListener("click", () => {
+    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+    passwordInput.setAttribute("type", type);
+    togglePassword.classList.toggle("fa-eye");
+    togglePassword.classList.toggle("fa-eye-slash");
+  });
+
+  function signup() {
+    const username = prompt("Enter a username to register:");
+    const password = prompt("Enter a password:");
+    if(!username || !password) {
+      alert("Username and password cannot be empty.");
+      return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    if(users.some(user => user.username === username)) {
+      alert("Username already exists. Please login.");
+      return;
+    }
+
+    users.push({username, password});
+    localStorage.setItem("users", JSON.stringify(users));
+    alert("Registration successful! You can now log in.");
+  }
+
+  function login() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const messageEl = document.getElementById("message");
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if(user) {
+      messageEl.style.color = "green";
+      messageEl.textContent = "Login successful! Redirecting...";
+      setTimeout(() => {
+        window.location.href = "frontpage.html";
+      }, 1000);
+    } else {
+      messageEl.style.color = "red";
+      messageEl.textContent = "Invalid username or password!";
+    }
+  }
+</script>
+
+</body>
+</html>

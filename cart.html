@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eco Mug - Cart</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* 🌿 Softer eco-friendly background */
+    body {
+      background: linear-gradient(135deg, #d8f3dc, #b7e4c7, #95d5b2);
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: rgba(244, 247, 243, 0.9);
+      padding: 15px 40px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+    }
+
+    .logo h1 {
+      font-size: 22px;
+      color: #2f572c;
+    }
+
+    .logo span {
+      font-size: 10px;
+      color: #777;
+      letter-spacing: 2px;
+    }
+
+    /* Nav icons */
+    .nav-icons {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 20px;
+      color: #2f572c;
+      cursor: pointer;
+      position: relative;
+    }
+
+    /* Soft green icons styling */
+    .nav-icons i,
+    .nav-icons a i {
+      color: #2f572c;
+      transition: color 0.3s ease;
+    }
+
+    .nav-icons i:hover,
+    .nav-icons a i:hover {
+      color: #3b6e38;
+    }
+
+    /* Highlight active profile icon */
+    .profile-link.active i {
+      color: #3b6e38;
+    }
+
+    .cart-container {
+      position: relative;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -10px;
+      background-color: #e74c3c;
+      color: white;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 50%;
+      font-weight: 600;
+    }
+
+    /* Dropdown menu */
+    .dropdown-menu {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      display: none;
+      flex-direction: column;
+      width: 180px;
+      z-index: 200;
+    }
+
+    .dropdown-menu a {
+      text-decoration: none;
+      color: #2f572c;
+      padding: 12px 20px;
+      border-bottom: 1px solid #eee;
+      font-size: 15px;
+      transition: background 0.3s;
+    }
+
+    .dropdown-menu a:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f2f7f2;
+    }
+
+    .dropdown-menu.active {
+      display: flex;
+    }
+
+    /* Cart Page */
+    main {
+      padding: 40px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #2f572c;
+    }
+
+    .cart-container-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px 20px;
+      border-radius: 12px;
+    }
+
+    .cart-item img {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .item-info {
+      flex: 1;
+      text-align: left;
+      margin-left: 15px;
+    }
+
+    .item-info h3 {
+      font-size: 16px;
+      color: #2f572c;
+    }
+
+    .item-info p {
+      font-size: 14px;
+      color: #3b6e38;
+    }
+
+    .remove-btn {
+      background: #e74c3c;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .remove-btn:hover {
+      background: #ff5e4d;
+    }
+
+    .total {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #2f572c;
+    }
+
+    .checkout-btn {
+      background: linear-gradient(135deg, #6bbf59, #3f8b3d);
+      border: none;
+      color: #fff;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 25px;
+      transition: all 0.3s ease;
+    }
+
+    .checkout-btn:hover {
+      background: linear-gradient(135deg, #77c86a, #47a346);
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 700px) {
+      .cart-item {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+      }
+    }
+
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .quantity-control input {
+      width: 50px;
+      text-align: center;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      padding: 5px;
+      font-size: 14px;
+    }
+
+    .qty-btn {
+      background: #3f8b3d;
+      color: #fff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .qty-btn:hover {
+      background: #5ab64d;
+    }
+
+    .cart-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #3f8b3d;
+      margin-right: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <a href="frontpage.html">
+        <img src="2337b154-a3ac-486d-ab9f-7a3d5c61fff1.jpg" alt="Eco Mug Logo">
+      </a>
+      <div>
+        <h1>ECO MUG</h1>
+        <span>READY, SIP, N' GO!</span>
+      </div>
+    </div>
+
+    <div class="nav-icons">
+      <div class="cart-container">
+        <i class="fa-solid fa-cart-shopping" id="cart-icon"></i>
+        <div class="cart-badge" id="cart-count">0</div>
+      </div>
+      <a href="profile.html" class="profile-link">
+        <i class="fa-solid fa-user"></i>
+      </a>
+      <i class="fa-solid fa-bars" id="menu-toggle"></i>
+
+      <!-- Dropdown menu -->
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="frontpage.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="shop.html">Shop</a>
+        <a href="fqa.html">F.A.Q</a>
+        <a href="nearest.html">Find Nearest Kiosk</a>
+        <a href="warranty.html">Warranty</a>
+        <a href="loginpage.html">Log out</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h2>Your Cart</h2>
+    <div id="cart-container" class="cart-container-box"></div>
+    <div id="total" class="total"></div>
+    <button class="checkout-btn" id="checkout-btn">Proceed to Checkout</button>
+  </main>
+
+  <script>
+    // Your original JS remains unchanged
+    let cart = JSON.parse(localStorage.getItem("cartDetails")) || [];
+    const cartContainer = document.getElementById("cart-container");
+    const totalDisplay = document.getElementById("total");
+    const cartCount = document.getElementById("cart-count");
+
+    function renderCart() {
+      cartContainer.innerHTML = "";
+      let total = 0;
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+        totalDisplay.textContent = "";
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        total += item.price * item.quantity;
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("cart-item");
+        itemDiv.innerHTML = `
+          <input type="checkbox" class="checkout-select" data-index="${index}">
+          <img src="${item.image}" alt="${item.name}">
+          <div class="item-info">
+            <h3>${item.name}</h3>
+            <p>₱${item.price.toFixed(2)} each</p>
+          </div>
+          <div class="quantity-control">
+            <button class="qty-btn" onclick="changeQuantity(${index}, -1)">-</button>
+            <input type="number" min="1" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)">
+            <button class="qty-btn" onclick="changeQuantity(${index}, 1)">+</button>
+          </div>
+          <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+        `;
+        cartContainer.appendChild(itemDiv);
+      });
+
+      totalDisplay.textContent = `Total: ₱${total.toFixed(2)}`;
+    }
+
+    function changeQuantity(index, delta) {
+      if (!cart[index]) return;
+      const newQty = cart[index].quantity + delta;
+      if (newQty < 1) return;
+      cart[index].quantity = newQty;
+      saveCart();
+    }
+
+    function updateQuantity(index, newValue) {
+      const qty = parseInt(newValue);
+      if (isNaN(qty) || qty < 1) return;
+      cart[index].quantity = qty;
+      saveCart();
+    }
+
+    function saveCart() {
+      localStorage.setItem("cartDetails", JSON.stringify(cart));
+      renderCart();
+      updateCartCount();
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      saveCart();
+    }
+
+    function updateCartCount() {
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartCount.textContent = totalItems;
+    }
+
+    document.getElementById("checkout-btn").addEventListener("click", () => {
+      const selectedItems = [];
+      const checkboxes = document.querySelectorAll(".checkout-select:checked");
+      if (checkboxes.length === 0) {
+        alert("Please select at least one product to checkout.");
+        return;
+      }
+      checkboxes.forEach(cb => {
+        const index = parseInt(cb.getAttribute("data-index"));
+        selectedItems.push(cart[index]);
+      });
+      localStorage.setItem("checkoutItems", JSON.stringify(selectedItems));
+      window.location.href = "checkout.html";
+    });
+
+    const menuToggle = document.getElementById("menu-toggle");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    const cartIcon = document.getElementById("cart-icon");
+
+    menuToggle.addEventListener("click", () => {
+      dropdownMenu.classList.toggle("active");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!menuToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove("active");
+      }
+    });
+
+    cartIcon.addEventListener("click", () => {
+      window.location.href = "cart.html";
+    });
+
+    updateCartCount();
+    renderCart();
+  </script>
+</body>
+</html>
