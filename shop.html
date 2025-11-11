@@ -327,24 +327,46 @@ let cart = JSON.parse(localStorage.getItem("cartDetails")) || [];
 updateCartCount();
 
 function updateCartCount() {
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  cartCount.textContent = totalItems;
+  // Count unique items instead of total quantities
+  const uniqueItems = cart.length;
+  cartCount.textContent = uniqueItems;
 }
 
 addButtons.forEach(button => {
   button.addEventListener("click", () => {
     const card = button.closest(".product-item");
     const name = card.querySelector("h3").textContent;
-    const price = parseFloat(card.querySelector("p strong + text") || card.querySelector("p").textContent.replace("₱", ""));
+    
+    // FIXED: Proper price extraction
+    const priceText = card.querySelector("p").textContent;
+    const price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 0;
+    
     const image = card.querySelector("img").src;
 
-    const existingItem = cart.find(item => item.name === name);
-    if (existingItem) existingItem.quantity += 1;
-    else cart.push({ name, price, image, quantity: 1 });
+    // Debug logging
+    console.log("Adding to cart:", { name, price, image });
+
+    // Check if item already exists in cart
+    const existingItemIndex = cart.findIndex(item => item.name === name);
+    
+    if (existingItemIndex !== -1) {
+      // Item exists, just increase quantity
+      cart[existingItemIndex].quantity += 1;
+    } else {
+      // New item, add to cart
+      cart.push({ 
+        name, 
+        price, 
+        image, 
+        quantity: 1,
+        selected: false
+      });
+    }
 
     localStorage.setItem("cartDetails", JSON.stringify(cart));
     updateCartCount();
 
+    // Visual feedback
     button.innerHTML = '<i class="fa-solid fa-check"></i> ADDED';
     button.style.background = "#47a346";
     setTimeout(() => {
