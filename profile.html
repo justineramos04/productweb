@@ -64,7 +64,6 @@
       position: relative;
     }
 
-    /* Soft green icons styling */
     .nav-icons i,
     .nav-icons a i {
       color: #2f572c;
@@ -220,7 +219,7 @@
   <!-- HEADER -->
   <header>
     <div class="logo">
-      <a href="frontpage.html>
+      <a href="frontpage.html">
         <img src="2337b154-a3ac-486d-ab9f-7a3d5c61fff1.jpg" alt="Eco Mug Logo">
       </a>
       <div>
@@ -252,17 +251,18 @@
 
   <!-- PROFILE CONTENT -->
   <div class="profile-container" id="profileContainer">
-    <h2 id="nameDisplay">John Doe</h2>
-    <p id="emailDisplay">johndoe@email.com</p>
+    <h2 id="nameDisplay">Guest User</h2>
+    <p id="emailDisplay">Please log in to view your profile</p>
 
     <div class="profile-info" id="profileInfo">
       <h3>Personal Information</h3>
-      <div class="info-item"><strong>Contact Number:</strong> <span id="contactDisplay">+63 912 345 6789</span></div>
-      <div class="info-item"><strong>Age:</strong> <span id="ageDisplay">21</span></div>
-      <div class="info-item"><strong>Address:</strong> <span id="addressDisplay">Puerto Princesa, Palawan</span></div>
+      <div class="info-item"><strong>Username:</strong> <span id="usernameDisplay">-</span></div>
+      <div class="info-item"><strong>Contact Number:</strong> <span id="contactDisplay">-</span></div>
+      <div class="info-item"><strong>Email:</strong> <span id="emailInfoDisplay">-</span></div>
+      <div class="info-item"><strong>Address:</strong> <span id="addressDisplay">-</span></div>
     </div>
 
-    <button class="edit-btn" id="editBtn">Edit Profile</button>
+    <button class="edit-btn" id="editBtn" style="display:none;">Edit Profile</button>
     <button class="save-btn" id="saveBtn" style="display:none;">Save Changes</button><br>
     <a href="frontpage.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
   </div>
@@ -282,29 +282,51 @@
     if (cartIcon) cartIcon.addEventListener("click", () => window.location.href = "cart.html");
     function updateCartCount() {
       const cart = JSON.parse(localStorage.getItem("cartDetails")) || [];
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const uniqueItems = cart.length;
       const cartCount = document.getElementById("cart-count");
-      if (cartCount) cartCount.textContent = totalItems;
+      if (cartCount) cartCount.textContent = uniqueItems;
     }
     updateCartCount();
 
-    // PROFILE EDIT FUNCTION
+    // LOAD USER PROFILE DATA
+    window.addEventListener('DOMContentLoaded', () => {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      
+      if (currentUser) {
+        // User is logged in, display their information
+        document.getElementById('nameDisplay').innerText = currentUser.name;
+        document.getElementById('emailDisplay').innerText = currentUser.email;
+        document.getElementById('usernameDisplay').innerText = currentUser.username;
+        document.getElementById('contactDisplay').innerText = currentUser.contact;
+        document.getElementById('emailInfoDisplay').innerText = currentUser.email;
+        document.getElementById('addressDisplay').innerText = currentUser.address;
+        
+        // Show edit button for logged-in users
+        document.getElementById('editBtn').style.display = 'inline-block';
+      } else {
+        // User is not logged in
+        document.getElementById('nameDisplay').innerText = 'Guest User';
+        document.getElementById('emailDisplay').innerText = 'Please log in to view your profile';
+        document.getElementById('profileInfo').innerHTML = '<p style="text-align:center;color:#777;">Please log in to view and edit your profile information.</p>';
+      }
+    });
+
+    // PROFILE EDIT FUNCTION (for logged-in users)
     const editBtn = document.getElementById('editBtn');
     const saveBtn = document.getElementById('saveBtn');
 
     editBtn.addEventListener('click', () => {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (!currentUser) return;
+
       // Get current values
       const name = document.getElementById('nameDisplay').innerText;
-      const email = document.getElementById('emailDisplay').innerText;
       const contact = document.getElementById('contactDisplay').innerText;
-      const age = document.getElementById('ageDisplay').innerText;
       const address = document.getElementById('addressDisplay').innerText;
 
       // Replace text with input fields
       document.getElementById('nameDisplay').outerHTML = `<input type="text" id="nameInput" value="${name}">`;
-      document.getElementById('emailDisplay').outerHTML = `<input type="email" id="emailInput" value="${email}">`;
       document.getElementById('contactDisplay').outerHTML = `<input type="text" id="contactInput" value="${contact}">`;
-      document.getElementById('ageDisplay').outerHTML = `<input type="number" id="ageInput" value="${age}">`;
       document.getElementById('addressDisplay').outerHTML = `<input type="text" id="addressInput" value="${address}">`;
 
       editBtn.style.display = "none";
@@ -312,33 +334,33 @@
     });
 
     saveBtn.addEventListener('click', () => {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (!currentUser) return;
+
       // Get updated values
       const name = document.getElementById('nameInput').value;
-      const email = document.getElementById('emailInput').value;
       const contact = document.getElementById('contactInput').value;
-      const age = document.getElementById('ageInput').value;
       const address = document.getElementById('addressInput').value;
 
-      // Save to localStorage
-      const profileData = { name, email, contact, age, address };
-      localStorage.setItem('profileData', JSON.stringify(profileData));
+      // Update current user data
+      currentUser.name = name;
+      currentUser.contact = contact;
+      currentUser.address = address;
 
-      // Update display
-      location.reload();
-    });
+      // Update in localStorage
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-    // LOAD SAVED PROFILE DATA
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedData = JSON.parse(localStorage.getItem('profileData'));
-      if (savedData) {
-        document.getElementById('nameDisplay').innerText = savedData.name;
-        document.getElementById('emailDisplay').innerText = savedData.email;
-        document.getElementById('contactDisplay').innerText = savedData.contact;
-        document.getElementById('ageDisplay').innerText = savedData.age;
-        document.getElementById('addressDisplay').innerText = savedData.address;
+      // Update users array
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const userIndex = users.findIndex(u => u.username === currentUser.username);
+      if (userIndex !== -1) {
+        users[userIndex] = currentUser;
+        localStorage.setItem("users", JSON.stringify(users));
       }
+
+      // Reload to show updated data
+      location.reload();
     });
   </script>
 </body>
 </html>
-
