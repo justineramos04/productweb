@@ -168,12 +168,75 @@
       transform: scale(1.05);
     }
 
+    /* Success Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      color: #2f572c;
+    }
+
+    .success-icon {
+      font-size: 64px;
+      color: #47a346;
+      margin-bottom: 20px;
+    }
+
+    .modal-buttons {
+      margin-top: 25px;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .modal-btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #3f8b3d;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .modal-btn:hover {
+      transform: translateY(-2px);
+    }
+
     @media (max-width: 600px) {
       .form-row {
         flex-direction: column;
       }
       .total {
         text-align: center;
+      }
+      .modal-buttons {
+        flex-direction: column;
       }
     }
   </style>
@@ -219,10 +282,28 @@
     <button class="confirm-btn" id="confirm-btn">Confirm Purchase</button>
   </main>
 
+  <!-- Success Modal -->
+  <div class="modal" id="success-modal">
+    <div class="modal-content">
+      <div class="success-icon">
+        <i class="fa-solid fa-check-circle"></i>
+      </div>
+      <h2>Order Confirmed! 🎉</h2>
+      <p>Thank you for your purchase!</p>
+      <p>Your order has been successfully placed and will be processed shortly.</p>
+      <div class="modal-buttons">
+        <button class="modal-btn btn-primary" onclick="goToHomePage()">Continue Shopping</button>
+        <button class="modal-btn btn-secondary" onclick="viewOrderDetails()">View Order Details</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const checkoutBox = document.getElementById("checkout-box");
     const totalDisplay = document.getElementById("total");
     const shippingDisplay = document.getElementById("shipping");
+    const confirmBtn = document.getElementById("confirm-btn");
+    const successModal = document.getElementById("success-modal");
 
     const items = JSON.parse(localStorage.getItem("checkoutItems")) || [];
     const shippingFee = 39;
@@ -233,6 +314,7 @@
         checkoutBox.innerHTML = "<p>No items selected for checkout.</p>";
         totalDisplay.textContent = "";
         shippingDisplay.textContent = "";
+        confirmBtn.disabled = true;
         return;
       }
 
@@ -258,7 +340,23 @@
       totalDisplay.textContent = "💰 Total Amount: ₱" + grandTotal.toFixed(2);
     }
 
-    document.getElementById("confirm-btn").addEventListener("click", () => {
+    function removePurchasedItemsFromCart() {
+      // Get current cart
+      const cart = JSON.parse(localStorage.getItem("cartDetails")) || [];
+      
+      // Get purchased item names
+      const purchasedItemNames = items.map(item => item.name);
+      
+      // Filter out purchased items from cart
+      const updatedCart = cart.filter(item => !purchasedItemNames.includes(item.name));
+      
+      // Save updated cart back to localStorage
+      localStorage.setItem("cartDetails", JSON.stringify(updatedCart));
+      
+      console.log("Removed purchased items from cart. Updated cart:", updatedCart);
+    }
+
+    function completePurchase() {
       const address = document.getElementById("address").value.trim();
       const payment = document.getElementById("payment").value;
 
@@ -275,15 +373,55 @@
         return;
       }
 
-      alert("✅ Thank you for your purchase!\n\n" +
-            "Payment Method: " + payment.toUpperCase() + "\n" +
-            "Delivery Address: " + address + "\n" +
-            "Your order has been placed successfully.");
+      // Remove purchased items from cart
+      removePurchasedItemsFromCart();
 
+      // Save order details (optional - for order history)
+      const orderDetails = {
+        items: items,
+        address: address,
+        payment: payment,
+        shippingFee: shippingFee,
+        total: items.reduce((sum, item) => sum + (item.price * item.quantity), 0) + shippingFee,
+        date: new Date().toLocaleString()
+      };
+
+      // Save to order history
+      const orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
+      orderHistory.push(orderDetails);
+      localStorage.setItem("orderHistory", JSON.stringify(orderHistory));
+
+      // Clear checkout items
       localStorage.removeItem("checkoutItems");
+
+      // Show success modal
+      successModal.style.display = 'flex';
+    }
+
+    function goToHomePage() {
+      // Redirect to home page
       window.location.href = "frontpage.html";
+    }
+
+    function viewOrderDetails() {
+      // You can redirect to an order details page here
+      alert("Order details feature coming soon!");
+      // For now, redirect to home
+      window.location.href = "frontpage.html";
+    }
+
+    // Event Listeners
+    confirmBtn.addEventListener("click", completePurchase);
+
+    // Close modal if clicked outside
+    successModal.addEventListener("click", function(e) {
+      if (e.target === successModal) {
+        successModal.style.display = 'none';
+        goToHomePage();
+      }
     });
 
+    // Initialize
     renderCheckout();
   </script>
 
