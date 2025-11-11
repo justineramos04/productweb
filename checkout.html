@@ -395,7 +395,6 @@
       
       <div class="modal-buttons">
         <button class="modal-btn btn-primary" onclick="goToHomePage()">Home</button>
-        <button class="modal-btn btn-secondary" onclick="closeOrderDetails()">Close</button>
       </div>
     </div>
   </div>
@@ -597,10 +596,6 @@
       orderDetailsModal.style.display = 'flex';
     }
 
-    function closeOrderDetails() {
-      orderDetailsModal.style.display = 'none';
-    }
-
     // Event Listeners
     confirmBtn.addEventListener("click", completePurchase);
 
@@ -623,3 +618,4 @@
 
 </body>
 </html>
+
