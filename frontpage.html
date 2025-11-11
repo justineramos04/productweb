@@ -499,15 +499,21 @@
     // CART ICON FUNCTION
     const cartIcon = document.getElementById("cart-icon");
     if (cartIcon) cartIcon.addEventListener("click", () => window.location.href = "cart.html");
+
     function updateCartCount() {
       const cart = JSON.parse(localStorage.getItem("cartDetails")) || [];
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      // Count unique items instead of total quantities
+      const uniqueItems = cart.length;
       const cartCount = document.getElementById("cart-count");
-      if (cartCount) cartCount.textContent = totalItems;
+      if (cartCount) cartCount.textContent = uniqueItems;
     }
     updateCartCount();
+
+    // To ensure cart count works
+    document.addEventListener('DOMContentLoaded', function() {
+      updateCartCount();
+    });
   </script>
 
 </body>
 </html>
-
