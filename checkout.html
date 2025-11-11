@@ -195,7 +195,7 @@
       transform: scale(1.05);
     }
 
-    /* Success Modal */
+    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -214,7 +214,7 @@
       padding: 40px;
       border-radius: 20px;
       text-align: center;
-      max-width: 500px;
+      max-width: 600px;
       width: 90%;
       color: #2f572c;
     }
@@ -253,6 +253,59 @@
 
     .modal-btn:hover {
       transform: translateY(-2px);
+    }
+
+    /* Order Details Styles */
+    .order-details {
+      text-align: left;
+      margin: 20px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border-left: 4px solid #47a346;
+    }
+
+    .order-section {
+      margin-bottom: 15px;
+    }
+
+    .order-section h4 {
+      color: #2f572c;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .order-items {
+      margin: 10px 0;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .order-item:last-child {
+      border-bottom: none;
+    }
+
+    .order-summary {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 2px solid #2f572c;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 5px 0;
+    }
+
+    .summary-total {
+      font-weight: bold;
+      font-size: 18px;
+      color: #2f572c;
     }
 
     @media (max-width: 600px) {
@@ -320,8 +373,27 @@
       <p>Thank you for your purchase!</p>
       <p>Your order has been successfully placed and will be processed shortly.</p>
       <div class="modal-buttons">
-        <button class="modal-btn btn-primary" onclick="goToHomePage()">Continue Shopping</button>
+        <button class="modal-btn btn-primary" onclick="goToHomePage()">Home</button>
         <button class="modal-btn btn-secondary" onclick="viewOrderDetails()">View Order Details</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div class="modal" id="order-details-modal">
+    <div class="modal-content">
+      <div class="success-icon">
+        <i class="fa-solid fa-receipt"></i>
+      </div>
+      <h2>Order Details</h2>
+      
+      <div class="order-details" id="order-details-content">
+        <!-- Order details will be inserted here -->
+      </div>
+      
+      <div class="modal-buttons">
+        <button class="modal-btn btn-primary" onclick="goToHomePage()">Home</button>
+        <button class="modal-btn btn-secondary" onclick="closeOrderDetails()">Close</button>
       </div>
     </div>
   </div>
@@ -332,11 +404,13 @@
     const shippingDisplay = document.getElementById("shipping");
     const confirmBtn = document.getElementById("confirm-btn");
     const successModal = document.getElementById("success-modal");
+    const orderDetailsModal = document.getElementById("order-details-modal");
     const addressInput = document.getElementById("address");
     const editAddressBtn = document.getElementById("edit-address-btn");
 
     const items = JSON.parse(localStorage.getItem("checkoutItems")) || [];
     const shippingFee = 39;
+    let currentOrder = null;
 
     // Load user's saved address
     function loadUserAddress() {
@@ -438,9 +512,9 @@
       removePurchasedItemsFromCart();
 
       // Save order details
-      const orderDetails = {
+      currentOrder = {
         orderId: 'ECO' + Date.now(),
-        items: items,
+        items: [...items], // Copy the items array
         address: address,
         payment: payment,
         shippingFee: shippingFee,
@@ -452,11 +526,8 @@
 
       // Save to order history
       const orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
-      orderHistory.unshift(orderDetails); // Add to beginning of array
+      orderHistory.unshift(currentOrder);
       localStorage.setItem("orderHistory", JSON.stringify(orderHistory));
-
-      // Save current order for order details page
-      localStorage.setItem("currentOrder", JSON.stringify(orderDetails));
 
       // Clear checkout items
       localStorage.removeItem("checkoutItems");
@@ -470,18 +541,77 @@
     }
 
     function viewOrderDetails() {
-      window.location.href = "order-details.html";
+      if (!currentOrder) return;
+      
+      // Populate order details
+      const orderDetailsContent = document.getElementById('order-details-content');
+      orderDetailsContent.innerHTML = `
+        <div class="order-section">
+          <h4>📦 Order Information</h4>
+          <p><strong>Order ID:</strong> ${currentOrder.orderId}</p>
+          <p><strong>Order Date:</strong> ${currentOrder.date}</p>
+          <p><strong>Status:</strong> <span style="color: #47a346;">${currentOrder.status}</span></p>
+        </div>
+
+        <div class="order-section">
+          <h4>📋 Order Items</h4>
+          <div class="order-items">
+            ${currentOrder.items.map(item => `
+              <div class="order-item">
+                <span>${item.name} (${item.quantity}x)</span>
+                <span>₱${(item.price * item.quantity).toFixed(2)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="order-section">
+          <h4>🏠 Delivery Information</h4>
+          <p><strong>Address:</strong> ${currentOrder.address}</p>
+          <p><strong>Payment Method:</strong> ${currentOrder.payment.toUpperCase()}</p>
+        </div>
+
+        <div class="order-section">
+          <h4>💰 Order Summary</h4>
+          <div class="order-summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span>₱${currentOrder.subtotal.toFixed(2)}</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping Fee:</span>
+              <span>₱${currentOrder.shippingFee.toFixed(2)}</span>
+            </div>
+            <div class="summary-row summary-total">
+              <span>Total:</span>
+              <span>₱${currentOrder.total.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Show order details modal and hide success modal
+      successModal.style.display = 'none';
+      orderDetailsModal.style.display = 'flex';
+    }
+
+    function closeOrderDetails() {
+      orderDetailsModal.style.display = 'none';
     }
 
     // Event Listeners
     confirmBtn.addEventListener("click", completePurchase);
 
-    // Close modal if clicked outside
-    successModal.addEventListener("click", function(e) {
-      if (e.target === successModal) {
-        successModal.style.display = 'none';
-        goToHomePage();
-      }
+    // Close modals when clicking outside
+    [successModal, orderDetailsModal].forEach(modal => {
+      modal.addEventListener("click", function(e) {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+          if (modal === successModal) {
+            goToHomePage();
+          }
+        }
+      });
     });
 
     // Initialize
