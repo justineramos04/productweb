@@ -135,15 +135,16 @@
       background: #47a346;
     }
 
+    /* CHANGED: Labels to black */
     label {
       display: block;
       margin-bottom: 5px;
       font-size: 15px;
-      color: #e3ffe3;
+      color: #000000; /* Changed to black */
       font-weight: 500;
     }
 
-    input, select, textarea {
+    input, select {
       width: 100%;
       padding: 12px;
       border: 1px solid #d4e8d1;
@@ -154,14 +155,15 @@
       margin-bottom: 15px;
     }
 
-    input:focus, select:focus, textarea:focus {
-      border-color: #4fa94d;
-      box-shadow: 0 0 8px rgba(79,169,77,0.3);
+    /* CHANGED: Address input to single line */
+    #address {
+      height: auto; /* Single line height */
+      resize: none; /* Disable resizing */
     }
 
-    textarea {
-      height: 80px;
-      resize: vertical;
+    input:focus, select:focus, #address:focus {
+      border-color: #4fa94d;
+      box-shadow: 0 0 8px rgba(79,169,77,0.3);
     }
 
     /* 🔥 Enhanced visibility for totals */
@@ -334,7 +336,7 @@
     <div class="details-box">
       <div class="form-group address-group">
         <label for="address">📍 Delivery Address:</label>
-        <textarea id="address" placeholder="Enter your delivery address"></textarea>
+        <input type="text" id="address" placeholder="Enter your delivery address">
         <button class="edit-address-btn" id="edit-address-btn">Edit</button>
       </div>
 
