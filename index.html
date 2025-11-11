@@ -143,6 +143,13 @@
       font-size: 14px;
     }
 
+    .success-message {
+      text-align: center;
+      color: green;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
   </style>
 </head>
 <body>
@@ -188,44 +195,128 @@
     togglePassword.classList.toggle("fa-eye-slash");
   });
 
+  // Initialize users array if it doesn't exist
+  function initializeUsers() {
+    if (!localStorage.getItem("users")) {
+      localStorage.setItem("users", JSON.stringify([]));
+    }
+  }
+
   function signup() {
+    initializeUsers();
+    
     const username = prompt("Enter a username to register:");
+    if (!username) {
+      alert("Username cannot be empty.");
+      return;
+    }
+
     const password = prompt("Enter a password:");
-    if(!username || !password) {
-      alert("Username and password cannot be empty.");
+    if (!password) {
+      alert("Password cannot be empty.");
       return;
     }
 
     let users = JSON.parse(localStorage.getItem("users")) || [];
+    
+    // Check if username already exists
     if(users.some(user => user.username === username)) {
-      alert("Username already exists. Please login.");
+      alert("Username already exists. Please choose a different username or login.");
       return;
     }
 
-    users.push({username, password});
+    // Add new user
+    users.push({
+      username: username.trim(), 
+      password: password.trim()
+    });
+    
     localStorage.setItem("users", JSON.stringify(users));
-    alert("Registration successful! You can now log in.");
+    
+    // Show success message on the page
+    const messageEl = document.getElementById("message");
+    messageEl.style.color = "green";
+    messageEl.textContent = "Registration successful! You can now log in.";
+    
+    // Clear the form
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
   }
 
   function login() {
+    initializeUsers();
+    
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
     const messageEl = document.getElementById("message");
 
+    // Validate inputs
+    if(!username || !password) {
+      messageEl.style.color = "red";
+      messageEl.textContent = "Please enter both username and password!";
+      return;
+    }
+
     const users = JSON.parse(localStorage.getItem("users")) || [];
-    const user = users.find(u => u.username === username && u.password === password);
+    
+    console.log("All users:", users); // Debug log
+    console.log("Looking for:", username, password); // Debug log
+    
+    // Find user with exact username and password match
+    const user = users.find(u => 
+      u.username === username && u.password === password
+    );
+
+    console.log("Found user:", user); // Debug log
 
     if(user) {
       messageEl.style.color = "green";
       messageEl.textContent = "Login successful! Redirecting...";
+      
+      // Save current user session
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      
       setTimeout(() => {
         window.location.href = "frontpage.html";
       }, 1000);
     } else {
       messageEl.style.color = "red";
       messageEl.textContent = "Invalid username or password!";
+      
+      // Additional debug info
+      const userExists = users.some(u => u.username === username);
+      if (userExists) {
+        messageEl.textContent += " (Username exists but password is incorrect)";
+      } else {
+        messageEl.textContent += " (Username not found)";
+      }
     }
   }
+
+  // Debug function to view all users (remove in production)
+  function debugUsers() {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    console.log("Stored users:", users);
+    alert("Total users: " + users.length + "\nUsers: " + JSON.stringify(users, null, 2));
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeUsers();
+    
+    // Add debug button (remove in production)
+    const debugBtn = document.createElement('button');
+    debugBtn.textContent = 'Debug Users';
+    debugBtn.style.marginTop = '10px';
+    debugBtn.style.padding = '5px 10px';
+    debugBtn.style.background = '#ff6b6b';
+    debugBtn.style.color = 'white';
+    debugBtn.style.border = 'none';
+    debugBtn.style.borderRadius = '4px';
+    debugBtn.style.cursor = 'pointer';
+    debugBtn.onclick = debugUsers;
+    document.querySelector('.login-container').appendChild(debugBtn);
+  });
 </script>
 
 </body>
