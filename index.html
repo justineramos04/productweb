@@ -367,92 +367,6 @@
       border-radius: 50%;
       font-weight: 600;
     }
-    
-    /* Login Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .modal-content {
-      background-color: white;
-      padding: 30px;
-      border-radius: 10px;
-      width: 400px;
-      max-width: 90%;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    
-    .modal h2 {
-      color: #2f572c;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    
-    .form-group {
-      margin-bottom: 15px;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      color: #2f572c;
-    }
-    
-    .form-group input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-    
-    .login-btn {
-      background-color: #2f572c;
-      color: white;
-      border: none;
-      padding: 12px;
-      width: 100%;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 10px;
-      transition: background-color 0.3s;
-    }
-    
-    .login-btn:hover {
-      background-color: #3b6e38;
-    }
-    
-    .register-link {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-    
-    .register-link a {
-      color: #2f572c;
-      text-decoration: none;
-    }
-    
-    .register-link a:hover {
-      text-decoration: underline;
-    }
-    
-    .close-modal {
-      float: right;
-      font-size: 24px;
-      cursor: pointer;
-      color: #777;
-    }
   </style>
 </head>
 <body>
@@ -471,7 +385,7 @@
       <i class="fa-solid fa-cart-shopping" id="cart-icon"></i>
       <div class="cart-badge" id="cart-count">0</div>
     </div>
-    <a href="#" class="profile-link" id="profile-link">
+    <a href="login.html" class="profile-link">
       <i class="fa-solid fa-user"></i>
     </a>
     <i class="fa-solid fa-bars" id="menu-toggle"></i>
@@ -484,7 +398,7 @@
       <a href="fqa.html">F.A.Q</a>
       <a href="nearest.html">Find Nearest Kiosk</a>
       <a href="warranty.html">Warranty</a>
-      <a href="#" id="logout-link">Log out</a>
+      <a href="index.html">Log out</a>
     </div>
   </div>
 </header>
@@ -506,7 +420,7 @@
       <div class="text-content">
         <h2>Sustainable and Functional Mug</h2>
         <p>Discover functional mugs with unique compartments designed for your essentials. Ready, Sip, N' Go!</p>
-        <button class="shop-btn" id="shop-now-btn">SHOP NOW</button>
+        <button class="shop-btn" onclick="window.location.href='shop.html'">SHOP NOW</button>
       </div>
     </div>
   </section>
@@ -554,28 +468,6 @@
     </div>
   </section>
 
-  <!-- Login Modal -->
-  <div class="modal" id="login-modal">
-    <div class="modal-content">
-      <span class="close-modal" id="close-login">&times;</span>
-      <h2>Login to Your Account</h2>
-      <form id="login-form">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" required>
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" required>
-        </div>
-        <button type="submit" class="login-btn">Login</button>
-      </form>
-      <div class="register-link">
-        <p>Don't have an account? <a href="#" id="register-link">Register here</a></p>
-      </div>
-    </div>
-  </div>
-
   <script>
     // SLIDER
     const slides = document.querySelectorAll('.slide');
@@ -620,89 +512,6 @@
     // To ensure cart count works
     document.addEventListener('DOMContentLoaded', function() {
       updateCartCount();
-    });
-
-    // Authentication and Profile Logic
-    const profileLink = document.getElementById('profile-link');
-    const shopNowBtn = document.getElementById('shop-now-btn');
-    const loginModal = document.getElementById('login-modal');
-    const closeLogin = document.getElementById('close-login');
-    const loginForm = document.getElementById('login-form');
-    const logoutLink = document.getElementById('logout-link');
-    const registerLink = document.getElementById('register-link');
-
-    // Check if user is logged in
-    function checkLoginStatus() {
-      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      return isLoggedIn;
-    }
-
-    // Profile link click handler
-    profileLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      
-      if (checkLoginStatus()) {
-        // User is logged in, redirect to profile page
-        window.location.href = 'profile.html';
-      } else {
-        // User is not logged in, show login modal
-        loginModal.style.display = 'flex';
-      }
-    });
-
-    // Shop now button click handler
-    shopNowBtn.addEventListener('click', function() {
-      window.location.href = 'shop.html';
-    });
-
-    // Close login modal
-    closeLogin.addEventListener('click', function() {
-      loginModal.style.display = 'none';
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', function(e) {
-      if (e.target === loginModal) {
-        loginModal.style.display = 'none';
-      }
-    });
-
-    // Login form submission
-    loginForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      // Simple login validation (in a real app, this would be server-side)
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      
-      if (email && password) {
-        // Store login status
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userEmail', email);
-        
-        // Close modal and redirect to profile
-        loginModal.style.display = 'none';
-        window.location.href = 'profile.html';
-      } else {
-        alert('Please enter both email and password');
-      }
-    });
-
-    // Logout functionality
-    logoutLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userEmail');
-      
-      // Redirect to home page
-      window.location.href = 'frontpage.html';
-    });
-
-    // Register link (placeholder)
-    registerLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      alert('Registration functionality would be implemented here');
     });
   </script>
 
